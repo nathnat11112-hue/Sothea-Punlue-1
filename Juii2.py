@@ -252,7 +252,7 @@ DEFAULT_DB = {
     "orders": [],
     "settings": {
         "contact_admin": "@BLACK_Izen",
-        "bot_name": "..",
+        "bot_name": "BOT",
         "maintenance": "0",
         "order_group_id": ""
     },
@@ -1066,8 +1066,8 @@ async def cmd_start(msg: Message, state: FSMContext):
 
     text = (
         f"<tg-emoji emoji-id='5413694143601842851'>👋</tg-emoji> <b>Hello {fname} !</b>\n\n\n"
-        f"<tg-emoji emoji-id='5312361253610475399'>🛒</tg-emoji> Welcome to <b>{bot_name}</b> \n"
-        
+        f"<tg-emoji emoji-id='5312361253610475399'>🛒</tg-emoji> Welcome TO BOT <b>{bot_name}</b> \n"
+        f"<tg-emoji emoji-id='5305522282695768654'>👇</tg-emoji> សូមចុចបូតុង (BUY NOW) 
     )
 
     start_media = get_setting('start_media')
