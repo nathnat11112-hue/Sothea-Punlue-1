@@ -252,7 +252,7 @@ DEFAULT_DB = {
     "orders": [],
     "settings": {
         "contact_admin": "@BLACK_Izen",
-        "bot_name": "BOT",
+        "bot_name": "!",
         "maintenance": "0",
         "order_group_id": ""
     },
@@ -1065,9 +1065,9 @@ async def cmd_start(msg: Message, state: FSMContext):
     rk = get_main_reply_kb(msg.from_user.id)
 
     text = (
-        f"<tg-emoji emoji-id='5413694143601842851'>👋</tg-emoji> <b>Hello {fname} !</b>\n\n\n"
-        f"<tg-emoji emoji-id='5312361253610475399'>🛒</tg-emoji> Welcome TO BOT <b>{bot_name}</b> \n"
-        f"<tg-emoji emoji-id='5305522282695768654'>👇</tg-emoji> សូមចុចបូតុង (BUY NOW) 
+        f"<tg-emoji emoji-id='5413694143601842851'>👋</tg-emoji> <b>𝙃𝙚𝙡𝙡𝙤 {fname} !</b>\n\n\n"
+        f"<tg-emoji emoji-id='5312361253610475399'>🛒</tg-emoji> 𝙒𝙚𝙡𝙘𝙤𝙢𝙚 𝙏𝙤 𝙈𝙮 𝘽𝙤𝙩 <b>{bot_name}</b> \n"
+        
     )
 
     start_media = get_setting('start_media')
