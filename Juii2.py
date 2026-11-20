@@ -1065,7 +1065,7 @@ async def cmd_start(msg: Message, state: FSMContext):
     rk = get_main_reply_kb(msg.from_user.id)
 
     text = (
-        f"<tg-emoji emoji-id='5413694143601842851'>👋</tg-emoji> <b>𝙃𝙚𝙡𝙡𝙤 𝙒𝙚𝙡𝙘𝙤𝙢𝙚 𝙏𝙤 𝙈𝙮 𝘽𝙤𝙩  {fname} !</b>\n\n\n"
+        f"<tg-emoji emoji-id='5413694143601842851'>👋</tg-emoji> <b>𝙃𝙚𝙡𝙡𝙤 {fname} 𝙒𝙚𝙡𝙘𝙤𝙢𝙚 𝙩𝙤 𝙤𝙪𝙧 𝙨𝙩𝙤𝙧𝙚. 𝙁𝙚𝙚𝙡 𝙛𝙧𝙚𝙚 𝙩𝙤 𝙗𝙧𝙤𝙬𝙨𝙚 𝙤𝙪𝙧 𝙥𝙧𝙤𝙙𝙪𝙘𝙩𝙨 𝙗𝙚𝙡𝙤𝙬.!</b>\n\n\n"
         f"<tg-emoji emoji-id='5233567011958697078'>🤗</tg-emoji>សូមចុចពាក្យ BUY NOW <b>{bot_name}</b> \n"
         
     )
