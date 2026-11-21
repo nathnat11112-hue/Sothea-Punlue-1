@@ -101,7 +101,7 @@ from aiogram.exceptions import (
 
 # 👉 ដាក់ Token ត្រង់នេះ (ឬដាក់ក្នុង Environment Variable ឈ្មោះ BOT_TOKEN / KHQR_API_KEY)
 BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip() or "9207384444:AAHQO54Nfgj4N0-vQHcLMllvmNoe6vamJE4"
-OWNER_ID  = 8879562656
+OWNER_ID  = 8371081776
 
 KHQR_API_KEY    = os.getenv("KHQR_API_KEY", "").strip() or ""
 KHQR_CREATE_URL = "https://khqrpay.site/api/v1/aba/create"
@@ -218,9 +218,9 @@ ICON_DEL_PLAN       = "6028205772117118673"
 ICON_ADD_FILE_LINK  = "6039522349517115015"
 ICON_DEL_FILE_LINK  = "5983580310292402968"
 ICON_BACK           = "5447506720316225765"  # ✅ Back Button Icon
-ICON_BUY_NOW        = "5447319442562251569"
+ICON_BUY_NOW        = "5312361253610475399"
 ICON_ADMIN_PANEL    = "5445372439397691719"
-ICON_HELLO          = "6129863473305230077"
+ICON_HELLO          = "5413694143601842851"
 ICON_STORE          = "6039451237743595514"
 
 # 👑 Admin Icons
@@ -325,8 +325,8 @@ DEFAULT_DB = {
     "stock": [],
     "orders": [],
     "settings": {
-        "contact_admin": "@putireach",
-        "bot_name": "REACH MOD VIP",
+        "contact_admin": "@BLACK_Izen",
+        "bot_name": ".!",
         "maintenance": "0",
         "order_group_id": ""
     },
@@ -754,9 +754,9 @@ def cancel_inline():
 
 
 def get_main_reply_kb(uid: int) -> ReplyKeyboardMarkup:
-    kb = [[RBtn(text="BUY NOW", style="success", icon_custom_emoji_id=ICON_BUY_NOW)]]
+    kb = [[RBtn(text="BUY NOW", style="success", icon_custom_emoji_id='5312361253610475399' [[(BUY_NOW)]]
     if is_admin_user(uid):
-        kb.append([RBtn(text="Admin Panel", style="danger", icon_custom_emoji_id=ICON_ADMIN_PANEL)])
+        kb.append([RBtn(text="ផ្ទាំងគ្រប់គ្រង", style="danger", icon_custom_emoji_id=ICON_([(ADMIN_PANEL)])
     return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
 
@@ -1142,9 +1142,9 @@ async def cmd_start(msg: Message, state: FSMContext):
     rk = get_main_reply_kb(msg.from_user.id)
 
     text = (
-        f"<tg-emoji emoji-id='{ICON_HELLO}'>👋</tg-emoji> <b>Hello {fname} !</b>\n\n\n"
-        f"<tg-emoji emoji-id='{ICON_STORE}'>🏪</tg-emoji> Welcome to <b>{bot_name}</b> bot store.\n"
-        f"Pls click button <b>BUY NOW</b>"
+        f"<tg-emoji emoji-id='5413694143601842851'>👋</tg-emoji> <b>𝙃𝙚𝙡𝙡𝙤 {fname} !</b>\n\n\n"
+        f"<tg-emoji emoji-id='6210653178237565381'>😄</tg-emoji> 𝙒𝙚𝙡𝙘𝙤𝙢𝙚 𝙩𝙤 𝙤𝙪𝙧 𝙨𝙩𝙤𝙧𝙚. 𝙁𝙚𝙚𝙡 𝙛𝙧𝙚𝙚 𝙩𝙤 𝙗𝙧𝙤𝙬𝙨𝙚 𝙤𝙪𝙧 𝙥𝙧𝙤𝙙𝙪𝙘𝙩𝙨 𝙗𝙚𝙡𝙤𝙬.! <b>{bot_name}</b> bot store.\n"
+        
     )
 
     start_media = get_setting('start_media')
