@@ -219,7 +219,7 @@ ICON_ADD_FILE_LINK  = "6039522349517115015"
 ICON_DEL_FILE_LINK  = "5983580310292402968"
 ICON_BACK           = "5447506720316225765"  # ✅ Back Button Icon
 ICON_BUY_NOW        = "5312361253610475399"
-ICON_ADMIN_PANEL    = "5445372439397691719"
+ICON_ADMIN_PANEL    = "5890864241388293875"
 ICON_HELLO          = "6129863473305230077"
 ICON_STORE          = "6039451237743595514"
 
@@ -325,8 +325,8 @@ DEFAULT_DB = {
     "stock": [],
     "orders": [],
     "settings": {
-        "contact_admin": "@putireach",
-        "bot_name": "REACH MOD VIP",
+        "contact_admin": "@Kailang_ii",
+        "bot_name": ".",
         "maintenance": "0",
         "order_group_id": ""
     },
@@ -754,7 +754,7 @@ def cancel_inline():
 
 
 def get_main_reply_kb(uid: int) -> ReplyKeyboardMarkup:
-    kb = [[RBtn(text="BUY NOW", style="success", icon_custom_emoji_id=ICON_BUY_NOW)]]
+    kb = [[RBtn(text="ទិញឥឡូវនេះ", style="success", icon_custom_emoji_id=ICON_BUY_NOW)]]
     if is_admin_user(uid):
         kb.append([RBtn(text="ផ្ទាំងគ្រប់គ្រង", style="danger", icon_custom_emoji_id=ICON_ADMIN_PANEL)])
     return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
@@ -807,8 +807,8 @@ def admin_main_kb():
               icon_custom_emoji_id=ICON_SETUP_GROUP),
          IBtn(text="Maintenance", callback_data="adm_maintenance", style="primary",
               icon_custom_emoji_id=ICON_MAINT_OPEN)]
-    ])
-
+    ])   IBtn(text="Edit "Plan/Products", callblack_data="adm_edit_plan_products", style="primary",
+              icon_custom_emoji_id=ICON_EDIT_NAME)]
 
 def setup_group_kb():
     return InlineKeyboardMarkup(inline_keyboard=[
@@ -825,25 +825,25 @@ def setup_group_kb():
 
 def manage_products_kb():
     return InlineKeyboardMarkup(inline_keyboard=[
-        [IBtn(text="Create Product", callback_data="adm_add_cat", style="primary",
+        [IBtn(text="Create Product", callback_data="adm_add_cat", style="success",
               icon_custom_emoji_id=ICON_CREATE_PRODUCT),
-         IBtn(text="Delete Product", callback_data="adm_del_cat", style="primary",
+         IBtn(text="Delete Product", callback_data="adm_del_cat", style="danger",
               icon_custom_emoji_id=ICON_DELETE_PRODUCT)],
-        [IBtn(text="Add Picture/Video", callback_data="adm_add_cat_media", style="primary",
+        [IBtn(text="Add Picture/Video", callback_data="adm_add_cat_media", style="success",
               icon_custom_emoji_id=ICON_ADD_PIC_VIDEO),
-         IBtn(text="Delete Picture/Video", callback_data="adm_del_cat_media", style="primary",
+         IBtn(text="Delete Picture/Video", callback_data="adm_del_cat_media", style="danger",
               icon_custom_emoji_id=ICON_DEL_PIC_VIDEO)],
-        [IBtn(text="Add Plan", callback_data="adm_add_item", style="primary",
+        [IBtn(text="Add Plan", callback_data="adm_add_item", style="success",
               icon_custom_emoji_id=ICON_ADD_PLAN),
-         IBtn(text="Delete Plan", callback_data="adm_del_item", style="primary",
+         IBtn(text="Delete Plan", callback_data="adm_del_item", style="danger",
               icon_custom_emoji_id=ICON_DEL_PLAN)],
         [IBtn(text="Edit Price Plan", callback_data="adm_edit_item_price", style="primary",
               icon_custom_emoji_id=ICON_ADD_PLAN)],
-        [IBtn(text="Add File/Link", callback_data="adm_add_post_media", style="primary",
+        [IBtn(text="Add File/Link", callback_data="adm_add_post_media", style="success",
               icon_custom_emoji_id=ICON_ADD_FILE_LINK),
-         IBtn(text="Delete File/Link", callback_data="adm_del_post_media", style="primary",
+         IBtn(text="Delete File/Link", callback_data="adm_del_post_media", style="danger",
               icon_custom_emoji_id=ICON_DEL_FILE_LINK)],
-        [IBtn(text="Back", callback_data="back_admin", style="primary",
+        [IBtn(text="Back", callback_data="back_admin", style="danger",
               icon_custom_emoji_id=ICON_BACK)]
     ])
 
@@ -856,7 +856,7 @@ def manage_admins_kb():
               icon_custom_emoji_id=ICON_ADD_ADMIN),
          IBtn(text="Del Admin", callback_data="adm_del_admin", style="danger",
               icon_custom_emoji_id=ICON_DEL_ADMIN)],
-        [IBtn(text="Back", callback_data="back_admin", style="primary",
+        [IBtn(text="Back", callback_data="back_admin", style="danger",
               icon_custom_emoji_id=ICON_BACK)]
     ])
 
@@ -884,7 +884,7 @@ def maintenance_kb():
               icon_custom_emoji_id=ICON_MAINT_OPEN),
          IBtn(text="Close", callback_data="adm_maint_close", style="danger",
               icon_custom_emoji_id=ICON_MAINT_CLOSE)],
-        [IBtn(text="Back", callback_data="back_admin", style="primary",
+        [IBtn(text="Back", callback_data="back_admin", style="danger",
               icon_custom_emoji_id=ICON_BACK)]
     ])
     return text, kb
