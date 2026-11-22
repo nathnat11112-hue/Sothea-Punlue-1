@@ -2932,12 +2932,12 @@ async def add_stock_save(msg: Message, state: FSMContext):
     alert = (
         f'<tg-emoji emoji-id="6269366244462301331">📦</tg-emoji> '
         f'<b>ស្តុកថ្មីបានមកដល់ហើយ!</b>\n\n'
-        f'<tg-emoji emoji-id="6264750868311056563">🛒</tg-emoji> • ទំនិញ៖ <b>{cat_name}</b>\n'
-        f'<tg-emoji emoji-id="6210653178237565381">😄</tg-emoji> • រយៈពេល៖ <b>{item["name"]}</b>\n'
-        f'<tg-emoji emoji-id="5431897022456145283">🗓</tg-emoji> • ចំនួនបន្ថែមស្តុកថ្មីបរិមាណ Key៖ <b>{added}</b>\n\n'
-        f'<tg-emoji emoji-id="6228765605080605101">💰</tg-emoji> '
+         • ទំនិញ៖ <b>{cat_name}</b>\n'
+         • រយៈពេល៖ <b>{item["name"]}</b>\n'
+         • ចំនួនបន្ថែមស្តុកថ្មី Key៖ <b>{added}</b>\n\n'
+        f'<tg-emoji emoji-id="6181304696041378504">✅</tg-emoji> '
         f'<b>បានបន្ថែមស្តុបរួចរាល់អាចធ្វើការទិញបាន!</b>\n'
-        f'<tg-emoji emoji-id="6102563003314479651">✔️</tg-emoji> '
+        f'<tg-emoji emoji-id="6071226041454564573">👉</tg-emoji> '
         f'ចុចប៊ូតុងខាងក្រោមដើម្បីទិញ៖'
     )
     kb = InlineKeyboardMarkup(inline_keyboard=[[IBtn(
