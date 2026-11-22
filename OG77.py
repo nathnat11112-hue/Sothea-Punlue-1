@@ -756,7 +756,7 @@ def cancel_inline():
 def get_main_reply_kb(uid: int) -> ReplyKeyboardMarkup:
     kb = [[RBtn(text="BUY NOW", style="success", icon_custom_emoji_id=ICON_BUY_NOW)]]
     if is_admin_user(uid):
-        kb.append([RBtn(text="ផ្ទាំងគ្រប់គ្រង", style="danger", icon_custom_emoji_id=ICON_ADMIN_PANEL)])
+        kb.append([RBtn(text="ផ្ទាំងគ្រប់គ្រង", style="default", icon_custom_emoji_id=ICON_ADMIN_PANEL)])
     return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
 
@@ -2425,7 +2425,7 @@ async def adm_manage_stock(call: CallbackQuery):
         items = get_items(c[0])
         plan_names = ", ".join([i["name"] for i in items]) if items else "No plans"
         kb.append([IBtn(text=f"{c[1]}: {plan_names}", callback_data=f"stkcat_{c[0]}",
-                        style="primary", icon_custom_emoji_id=ICON_ADD_PLAN)])
+                        style="default", icon_custom_emoji_id=ICON_ADD_PLAN)])
 
     kb.append([IBtn(text="Back", callback_data="back_admin",
                     style="primary", icon_custom_emoji_id=ICON_BACK)])
@@ -2475,7 +2475,7 @@ async def stk_options(call: CallbackQuery):
     current_stock = count_stock(item_id)
 
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [IBtn(text="Add Stock", callback_data=f"addstk_{item_id}", style="success",
+        [IBtn(text="Add Stock", callback_data=f"addstk_{item_id}", style="default",
               icon_custom_emoji_id=ICON_ADD_FILE_LINK),
          IBtn(text="View Key", callback_data=f"viewkey_{item_id}", style="success",
               icon_custom_emoji_id=ICON_ADD_PLAN)],
@@ -2707,7 +2707,7 @@ async def adm_reseller(call: CallbackQuery):
     kb = InlineKeyboardMarkup(inline_keyboard=[
         [IBtn(text="View Resellers (Total Buy)", callback_data="view_resellers",
               style="success", icon_custom_emoji_id=ICON_RES_TITLE)],
-        [IBtn(text="Add Reseller", callback_data="add_reseller", style="success",
+        [IBtn(text="Add Reseller", callback_data="add_reseller", style="default",
               icon_custom_emoji_id=ICON_CREATE_PRODUCT),
          IBtn(text="Del Reseller", callback_data="del_reseller", style="danger",
               icon_custom_emoji_id=ICON_DELETE_PRODUCT)],
