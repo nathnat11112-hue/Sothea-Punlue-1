@@ -1,5 +1,5 @@
 # ====================================================================================================
-# 🤖 NAJA  MOD KEY BOT - AUTOMATION SYSTEM (ULTIMATE UPDATE PRO)
+# 🤖 LANG  MOD KEY BOT - AUTOMATION SYSTEM (ULTIMATE UPDATE PRO)
 # ====================================================================================================
 
 import os
@@ -38,7 +38,7 @@ from aiogram.enums import ParseMode
 # [ កំណត់រចនាសម្ព័ន្ធទូទៅ ]
 # ====================================================================================================
 
-BOT_TOKEN = "8841614257:AAGoDFXqRRnTP8D6c47qH1dtBWocmxu1CUI"
+BOT_TOKEN = ""
 OWNER_ID = 8371081776
 MAIN_BOT_ID = int(BOT_TOKEN.split(':')[0])
 
