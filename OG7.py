@@ -325,8 +325,8 @@ DEFAULT_DB = {
     "stock": [],
     "orders": [],
     "settings": {
-        "contact_admin": "@putireach",
-        "bot_name": "REACH MOD VIP",
+        "contact_admin": "@Kailang_ii",
+        "bot_name": "𝑲𝒂𝒊𝒍𝒂𝒏𝒈𝑩𝒐𝒕",
         "maintenance": "0",
         "order_group_id": ""
     },
@@ -754,9 +754,9 @@ def cancel_inline():
 
 
 def get_main_reply_kb(uid: int) -> ReplyKeyboardMarkup:
-    kb = [[RBtn(text="ទិញឥឡូវនេះ", style="success", icon_custom_emoji_id=ICON_BUY_NOW)]]
+    kb = [[RBtn(text="BUY NOW", style="success", icon_custom_emoji_id=ICON_BUY_NOW)]]
     if is_admin_user(uid):
-        kb.append([RBtn(text="ផ្ទាំងគ្រប់គ្រង", style="default", icon_custom_emoji_id=ICON_ADMIN_PANEL)])
+        kb.append([RBtn(text="ផ្ទាំងគ្រប់គ្រង", style="danger", icon_custom_emoji_id=ICON_ADMIN_PANEL)])
     return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
 
 
@@ -789,36 +789,36 @@ def is_admin_user(uid: int) -> bool:
 
 def admin_main_kb():
     return InlineKeyboardMarkup(inline_keyboard=[
-        [IBtn(text="Manage Products", callback_data="adm_manage_products", style="primary",
+        [IBtn(text="Manage Products", callback_data="adm_manage_products", style="default",
               icon_custom_emoji_id=ICON_CREATE_PRODUCT)],
-        [IBtn(text="View Stock", callback_data="adm_view_stock", style="primary",
+        [IBtn(text="View Stock", callback_data="adm_view_stock", style="default",
               icon_custom_emoji_id=ICON_DELETE_PRODUCT),
-         IBtn(text="Manage Stock", callback_data="adm_manage_stock", style="primary",
+         IBtn(text="Manage Stock", callback_data="adm_manage_stock", style="default",
               icon_custom_emoji_id=ICON_ADD_PIC_VIDEO)],
-        [IBtn(text="Broadcast", callback_data="adm_broadcast", style="primary",
+        [IBtn(text="Broadcast", callback_data="adm_broadcast", style="default",
               icon_custom_emoji_id=ICON_ADD_PLAN),
-         IBtn(text="Manage Reseller", callback_data="adm_reseller", style="primary",
+         IBtn(text="Manage Reseller", callback_data="adm_reseller", style="default",
               icon_custom_emoji_id=ICON_DEL_PLAN)],
-        [IBtn(text="Manage Admins", callback_data="adm_manage_admins", style="primary",
+        [IBtn(text="Manage Admins", callback_data="adm_manage_admins", style="default",
               icon_custom_emoji_id=ICON_ADD_ADMIN),
-         IBtn(text="Set Start Media", callback_data="adm_start_media", style="primary",
+         IBtn(text="Set Start Media", callback_data="adm_start_media", style="default",
               icon_custom_emoji_id=ICON_DEL_FILE_LINK)],
-        [IBtn(text="Setup Group", callback_data="adm_setup_group", style="primary",
+        [IBtn(text="Setup Group", callback_data="adm_setup_group", style="default",
               icon_custom_emoji_id=ICON_SETUP_GROUP),
-         IBtn(text="Maintenance", callback_data="adm_maintenance", style="primary",
+         IBtn(text="Maintenance", callback_data="adm_maintenance", style="default",
               icon_custom_emoji_id=ICON_MAINT_OPEN)]
     ])
 
 
 def setup_group_kb():
     return InlineKeyboardMarkup(inline_keyboard=[
-        [IBtn(text="Add Group", callback_data="adm_add_group", style="primary",
+        [IBtn(text="Add Group", callback_data="adm_add_group", style="default",
               icon_custom_emoji_id=ICON_ADD_GROUP),
          IBtn(text="Del Grop", callback_data="adm_del_group", style="danger",
               icon_custom_emoji_id=ICON_DEL_GROUP)],
         [IBtn(text="View Gp Id", callback_data="adm_view_group", style="success",
               icon_custom_emoji_id=ICON_VIEW_GROUP)],
-        [IBtn(text="Back", callback_data="back_admin", style="primary",
+        [IBtn(text="Back", callback_data="back_admin", style="danger",
               icon_custom_emoji_id=ICON_BACK)]
     ])
 
@@ -1868,7 +1868,7 @@ async def _send_order_notifications(uid, user_snapshot, item_name, total_paid, q
         if rem_stock == 0:
             alert = alert.replace("ស្តុកជិតអស់ហើយ", "ស្តុកត្រូវបានលក់អស់ហើយ")
         kb = InlineKeyboardMarkup(inline_keyboard=[[IBtn(
-            text="ទិញឥឡូវនេះ", callback_data="buy_now_direct",
+            text="BUY NOW", callback_data="buy_now_direct",
             style="success", icon_custom_emoji_id="5312361253610475399")]])
         await broadcast_users(alert, kb)
 
@@ -2569,7 +2569,7 @@ async def add_stock_save(msg: Message, state: FSMContext):
         f'ចុចប៊ូតុងខាងក្រោមដើម្បីទិញ៖'
     )
     kb = InlineKeyboardMarkup(inline_keyboard=[[IBtn(
-        text="ទិញឥឡូវនេះ", callback_data="buy_now_direct",
+        text="BUY NOW", callback_data="buy_now_direct",
         style="success", icon_custom_emoji_id="5312361253610475399")]])
     run_bg_task(broadcast_users(alert, kb))
 
