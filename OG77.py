@@ -1868,7 +1868,7 @@ async def _send_order_notifications(uid, user_snapshot, item_name, total_paid, q
         if rem_stock == 0:
             alert = alert.replace("ស្តុកជិតអស់ហើយ", "ស្តុកត្រូវបានលក់អស់ហើយ")
         kb = InlineKeyboardMarkup(inline_keyboard=[[IBtn(
-            text="BUY NOW", callback_data="buy_now_direct",
+            text="ទិញឥឡូវនេះ", callback_data="buy_now_direct",
             style="success", icon_custom_emoji_id="5312361253610475399")]])
         await broadcast_users(alert, kb)
 
@@ -2569,7 +2569,7 @@ async def add_stock_save(msg: Message, state: FSMContext):
         f'ចុចប៊ូតុងខាងក្រោមដើម្បីទិញ៖'
     )
     kb = InlineKeyboardMarkup(inline_keyboard=[[IBtn(
-        text="BUY NOW", callback_data="buy_now_direct",
+        text="ទិញឥឡូវនេះ", callback_data="buy_now_direct",
         style="success", icon_custom_emoji_id="5312361253610475399")]])
     run_bg_task(broadcast_users(alert, kb))
 
