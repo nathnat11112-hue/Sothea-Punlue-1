@@ -754,7 +754,7 @@ def cancel_inline():
 
 
 def get_main_reply_kb(uid: int) -> ReplyKeyboardMarkup:
-    kb = [[RBtn(text="BUY NOW", style="success", icon_custom_emoji_id=ICON_BUY_NOW)]]
+    kb = [[RBtn(text="ទិញឥឡូវនេះ", style="success", icon_custom_emoji_id=ICON_BUY_NOW)]]
     if is_admin_user(uid):
         kb.append([RBtn(text="ផ្ទាំងគ្រប់គ្រង", style="default", icon_custom_emoji_id=ICON_ADMIN_PANEL)])
     return ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
