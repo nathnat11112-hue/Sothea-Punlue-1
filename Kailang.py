@@ -60,6 +60,7 @@ def _setup_libs():
 _setup_libs()
 
 import asyncio
+import html as _html
 import logging
 import time
 import io
@@ -83,7 +84,7 @@ from aiogram.filters import CommandStart, Command
 from aiogram.types import (
     Message, CallbackQuery, ReplyKeyboardMarkup, KeyboardButton,
     ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton,
-    BufferedInputFile, LinkPreviewOptions,
+    BufferedInputFile, LinkPreviewOptions, BotCommand,
 )
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
@@ -559,6 +560,32 @@ def update_item_prices(item_id: int, price: float, reseller_price: float):
     _save_db(data)
 
 
+def update_category(cid: int, name: Optional[str] = None, icon: Optional[str] = None):
+    """Edit Platform (Category): ប្តូរឈ្មោះ និង/ឬ Icon"""
+    data = _load_db()
+    for c in data["categories"]:
+        if c["id"] == cid:
+            if name is not None:
+                c["name"] = name
+            if icon is not None:
+                c["icon"] = icon
+            break
+    _save_db(data)
+
+
+def update_item(item_id: int, name: Optional[str] = None, icon: Optional[str] = None):
+    """Edit Package (Plan): ប្តូរឈ្មោះ និង/ឬ Icon"""
+    data = _load_db()
+    for i in data["items"]:
+        if i["id"] == item_id:
+            if name is not None:
+                i["name"] = name
+            if icon is not None:
+                i["icon"] = icon
+            break
+    _save_db(data)
+
+
 def get_items(cat_id: int):
     return [i for i in _load_db()["items"] if i["cat_id"] == cat_id]
 
@@ -837,6 +864,10 @@ def manage_products_kb():
               icon_custom_emoji_id=ICON_ADD_PLAN),
          IBtn(text="Delete Plan", callback_data="adm_del_item", style="primary",
               icon_custom_emoji_id=ICON_DEL_PLAN)],
+        [IBtn(text="Edit Platform", callback_data="adm_edit_cat", style="primary",
+              icon_custom_emoji_id=ICON_CREATE_PRODUCT),
+         IBtn(text="Edit Package", callback_data="adm_edit_item", style="primary",
+              icon_custom_emoji_id=ICON_ADD_PLAN)],
         [IBtn(text="Edit Price Plan", callback_data="adm_edit_item_price", style="primary",
               icon_custom_emoji_id=ICON_ADD_PLAN)],
         [IBtn(text="Add File/Link", callback_data="adm_add_post_media", style="primary",
@@ -1101,6 +1132,12 @@ class AdminEditItemPrice(StatesGroup):
     price = State()
     reseller_price = State()
 
+class AdminEditCat(StatesGroup):
+    cat_id = State(); name = State(); icon = State()
+
+class AdminEditItem(StatesGroup):
+    item_id = State(); name = State(); icon = State()
+
 class AdminAddStock(StatesGroup):
     item_id = State(); keys = State()
 
@@ -1172,6 +1209,12 @@ async def shop_categories(msg: Message, state: FSMContext):
     await state.clear()
     await cancel_and_delete_user_qr(msg.from_user.id)
     await send_categories(msg)
+
+
+@dp.message(Command("buy"))
+async def cmd_buy(msg: Message, state: FSMContext):
+    """/buy — ដូច BUY NOW ដែរ"""
+    await shop_categories(msg, state)
 
 
 async def send_categories(event):
@@ -2253,6 +2296,335 @@ async def adm_edit_price_save(msg: Message, state: FSMContext):
         await msg.answer("❌ សូមបញ្ចូលតម្លៃជាលេខត្រឹមត្រូវ (ឧ. 4.0):", reply_markup=cancel_inline())
 
 
+# ====================================================================================================
+# [ ✏️ EDIT PLATFORM / EDIT PACKAGE ]
+# ====================================================================================================
+
+def _back_manage_row():
+    return [IBtn(text="Back", callback_data="adm_manage_products", style="primary",
+                 icon_custom_emoji_id=ICON_BACK)]
+
+
+# ----- EDIT PLATFORM -----
+
+@dp.callback_query(F.data == "adm_edit_cat")
+@auto_answer()
+async def adm_edit_cat_pick(call: CallbackQuery, state: FSMContext):
+    if not is_admin_user(call.from_user.id):
+        return
+    await state.clear()
+    cats = get_categories()
+    if not cats:
+        return await safe_edit_or_send(
+            call, "❌ មិនទាន់មាន Platform ទេ!",
+            InlineKeyboardMarkup(inline_keyboard=[_back_manage_row()]))
+    kb = [[IBtn(text=c[1], callback_data=f"ecat_{c[0]}", style="primary",
+                icon_custom_emoji_id=c[2])] for c in cats]
+    kb.append(_back_manage_row())
+    await safe_edit_or_send(call, "✏️ <b>ជ្រើសរើស Platform ដែលចង់ Edit៖</b>",
+                            InlineKeyboardMarkup(inline_keyboard=kb))
+
+
+def _edit_cat_menu(cid: int):
+    cat = get_category(cid)
+    if not cat:
+        return None, None
+    text = (
+        f"✏️ <b>Edit Platform</b>\n"
+        f"━━━━━━━━━━━━━━━━━━━\n"
+        f"📂 ឈ្មោះបច្ចុប្បន្ន: <b>{_html.escape(str(cat['name']))}</b>\n"
+        f"✨ Icon បច្ចុប្បន្ន: <code>{_html.escape(str(cat.get('icon') or '-'))}</code>\n\n"
+        f"👉 ជ្រើសរើសអ្វីដែលចង់កែ៖"
+    )
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [IBtn(text="Edit Name", callback_data=f"ecatn_{cid}", style="primary"),
+         IBtn(text="Edit Icon", callback_data=f"ecati_{cid}", style="primary")],
+        [IBtn(text="Back", callback_data="adm_edit_cat", style="primary",
+              icon_custom_emoji_id=ICON_BACK)],
+    ])
+    return text, kb
+
+
+@dp.callback_query(F.data.startswith("ecat_"))
+@auto_answer()
+async def adm_edit_cat_menu(call: CallbackQuery, state: FSMContext):
+    if not is_admin_user(call.from_user.id):
+        return
+    await state.clear()
+    try:
+        cid = int(call.data.split("_")[1])
+    except (ValueError, IndexError):
+        return
+    text, kb = _edit_cat_menu(cid)
+    if not text:
+        return await safe_edit_or_send(
+            call, "❌ រក Platform មិនឃើញ!",
+            InlineKeyboardMarkup(inline_keyboard=[_back_manage_row()]))
+    await safe_edit_or_send(call, text, kb)
+
+
+@dp.callback_query(F.data.startswith("ecatn_"))
+@auto_answer()
+async def adm_edit_cat_name_ask(call: CallbackQuery, state: FSMContext):
+    if not is_admin_user(call.from_user.id):
+        return
+    try:
+        cid = int(call.data.split("_")[1])
+    except (ValueError, IndexError):
+        return
+    cat = get_category(cid)
+    if not cat:
+        return
+    await state.update_data(cat_id=cid)
+    await state.set_state(AdminEditCat.name)
+    await safe_edit_or_send(
+        call,
+        f"📝 ឈ្មោះបច្ចុប្បន្ន: <b>{_html.escape(str(cat['name']))}</b>\n\n"
+        f"👉 <b>សូមផ្ញើឈ្មោះ Platform ថ្មី៖</b>",
+        cancel_inline())
+
+
+@dp.message(AdminEditCat.name)
+async def adm_edit_cat_name_save(msg: Message, state: FSMContext):
+    if not msg.text or not msg.text.strip():
+        return await msg.answer("❌ សូមផ្ញើឈ្មោះជាអក្សរ។", reply_markup=cancel_inline())
+    d = await state.get_data()
+    cid = d.get("cat_id")
+    if cid is None or not get_category(cid):
+        await state.clear()
+        return await msg.answer("❌ រក Platform មិនឃើញ!")
+    new_name = msg.text.strip()
+    update_category(cid, name=new_name)
+    await state.clear()
+    await msg.answer(
+        f"✅ <b>កែឈ្មោះ Platform ជោគជ័យ!</b>\n📂 ឈ្មោះថ្មី: <b>{_html.escape(new_name)}</b>",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [IBtn(text="Edit Again", callback_data=f"ecat_{cid}", style="primary")],
+            _back_manage_row(),
+        ]))
+
+
+@dp.callback_query(F.data.startswith("ecati_"))
+@auto_answer()
+async def adm_edit_cat_icon_ask(call: CallbackQuery, state: FSMContext):
+    if not is_admin_user(call.from_user.id):
+        return
+    try:
+        cid = int(call.data.split("_")[1])
+    except (ValueError, IndexError):
+        return
+    cat = get_category(cid)
+    if not cat:
+        return
+    await state.update_data(cat_id=cid)
+    await state.set_state(AdminEditCat.icon)
+    await safe_edit_or_send(
+        call,
+        f"📂 Platform: <b>{_html.escape(str(cat['name']))}</b>\n\n"
+        f"✨ <b>សូមផ្ញើ Premium Emoji, Regular Emoji ឬ ID ថ្មី៖</b>",
+        cancel_inline())
+
+
+@dp.message(AdminEditCat.icon)
+async def adm_edit_cat_icon_save(msg: Message, state: FSMContext):
+    icon_id = extract_emoji(msg)
+    if not icon_id:
+        return await msg.answer(
+            "❌ Invalid! Send a Premium Emoji, Regular Emoji, or its ID number (max 20 chars):",
+            reply_markup=cancel_inline())
+    d = await state.get_data()
+    cid = d.get("cat_id")
+    if cid is None or not get_category(cid):
+        await state.clear()
+        return await msg.answer("❌ រក Platform មិនឃើញ!")
+    update_category(cid, icon=icon_id)
+    await state.clear()
+    await msg.answer(
+        "✅ <b>កែ Icon Platform ជោគជ័យ!</b>",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [IBtn(text="Edit Again", callback_data=f"ecat_{cid}", style="primary")],
+            _back_manage_row(),
+        ]))
+
+
+# ----- EDIT PACKAGE -----
+
+@dp.callback_query(F.data == "adm_edit_item")
+@auto_answer()
+async def adm_edit_item_pick_cat(call: CallbackQuery, state: FSMContext):
+    if not is_admin_user(call.from_user.id):
+        return
+    await state.clear()
+    cats = get_categories()
+    if not cats:
+        return await safe_edit_or_send(
+            call, "❌ មិនទាន់មាន Platform ទេ!",
+            InlineKeyboardMarkup(inline_keyboard=[_back_manage_row()]))
+    kb = [[IBtn(text=c[1], callback_data=f"eipc_{c[0]}", style="primary",
+                icon_custom_emoji_id=c[2])] for c in cats]
+    kb.append(_back_manage_row())
+    await safe_edit_or_send(call, "📂 <b>ជ្រើសរើស Platform ដែលមាន Package ចង់ Edit៖</b>",
+                            InlineKeyboardMarkup(inline_keyboard=kb))
+
+
+@dp.callback_query(F.data.startswith("eipc_"))
+@auto_answer()
+async def adm_edit_item_pick(call: CallbackQuery, state: FSMContext):
+    if not is_admin_user(call.from_user.id):
+        return
+    await state.clear()
+    try:
+        cid = int(call.data.split("_")[1])
+    except (ValueError, IndexError):
+        return
+    items = get_items(cid)
+    back_row = [IBtn(text="Back", callback_data="adm_edit_item", style="primary",
+                     icon_custom_emoji_id=ICON_BACK)]
+    if not items:
+        return await safe_edit_or_send(
+            call, "❌ Platform នេះមិនទាន់មាន Package ទេ!",
+            InlineKeyboardMarkup(inline_keyboard=[back_row]))
+    kb = []
+    for i in items:
+        price = float(i.get("price", 0.0))
+        kb.append([IBtn(text=f"{i['name']} (${price:.2f})", callback_data=f"eitm_{i['id']}",
+                        style="primary", icon_custom_emoji_id=i.get("icon"))])
+    kb.append(back_row)
+    cat = get_category(cid)
+    cname = _html.escape(str(cat["name"])) if cat else ""
+    await safe_edit_or_send(
+        call, f"✏️ <b>ជ្រើសរើស Package ដែលចង់ Edit</b>\n📂 Platform: <b>{cname}</b>",
+        InlineKeyboardMarkup(inline_keyboard=kb))
+
+
+def _edit_item_menu(item_id: int):
+    item = get_item(item_id)
+    if not item:
+        return None, None
+    p_norm = float(item.get("price", 0.0))
+    p_res = float(item.get("reseller_price", p_norm))
+    text = (
+        f"✏️ <b>Edit Package</b>\n"
+        f"━━━━━━━━━━━━━━━━━━━\n"
+        f"📌 ឈ្មោះបច្ចុប្បន្ន: <b>{_html.escape(str(item['name']))}</b>\n"
+        f"✨ Icon បច្ចុប្បន្ន: <code>{_html.escape(str(item.get('icon') or '-'))}</code>\n"
+        f"💵 តម្លៃធម្មតា: <b>${p_norm:.2f}</b>\n"
+        f"🏷 តម្លៃ Reseller: <b>${p_res:.2f}</b>\n\n"
+        f"👉 ជ្រើសរើសអ្វីដែលចង់កែ៖"
+    )
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [IBtn(text="Edit Name", callback_data=f"eitmn_{item_id}", style="primary"),
+         IBtn(text="Edit Icon", callback_data=f"eitmi_{item_id}", style="primary")],
+        [IBtn(text="Edit Price", callback_data=f"edtp_{item_id}", style="primary",
+              icon_custom_emoji_id=ICON_ADD_PLAN)],
+        [IBtn(text="Back", callback_data=f"eipc_{item['cat_id']}", style="primary",
+              icon_custom_emoji_id=ICON_BACK)],
+    ])
+    return text, kb
+
+
+@dp.callback_query(F.data.startswith("eitm_"))
+@auto_answer()
+async def adm_edit_item_menu(call: CallbackQuery, state: FSMContext):
+    if not is_admin_user(call.from_user.id):
+        return
+    await state.clear()
+    try:
+        item_id = int(call.data.split("_")[1])
+    except (ValueError, IndexError):
+        return
+    text, kb = _edit_item_menu(item_id)
+    if not text:
+        return await safe_edit_or_send(
+            call, "❌ រក Package មិនឃើញ!",
+            InlineKeyboardMarkup(inline_keyboard=[_back_manage_row()]))
+    await safe_edit_or_send(call, text, kb)
+
+
+@dp.callback_query(F.data.startswith("eitmn_"))
+@auto_answer()
+async def adm_edit_item_name_ask(call: CallbackQuery, state: FSMContext):
+    if not is_admin_user(call.from_user.id):
+        return
+    try:
+        item_id = int(call.data.split("_")[1])
+    except (ValueError, IndexError):
+        return
+    item = get_item(item_id)
+    if not item:
+        return
+    await state.update_data(item_id=item_id)
+    await state.set_state(AdminEditItem.name)
+    await safe_edit_or_send(
+        call,
+        f"📝 ឈ្មោះបច្ចុប្បន្ន: <b>{_html.escape(str(item['name']))}</b>\n\n"
+        f"👉 <b>សូមផ្ញើឈ្មោះ Package ថ្មី៖</b>",
+        cancel_inline())
+
+
+@dp.message(AdminEditItem.name)
+async def adm_edit_item_name_save(msg: Message, state: FSMContext):
+    if not msg.text or not msg.text.strip():
+        return await msg.answer("❌ សូមផ្ញើឈ្មោះជាអក្សរ។", reply_markup=cancel_inline())
+    d = await state.get_data()
+    item_id = d.get("item_id")
+    if item_id is None or not get_item(item_id):
+        await state.clear()
+        return await msg.answer("❌ រក Package មិនឃើញ!")
+    new_name = msg.text.strip()
+    update_item(item_id, name=new_name)
+    await state.clear()
+    await msg.answer(
+        f"✅ <b>កែឈ្មោះ Package ជោគជ័យ!</b>\n📌 ឈ្មោះថ្មី: <b>{_html.escape(new_name)}</b>",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [IBtn(text="Edit Again", callback_data=f"eitm_{item_id}", style="primary")],
+            _back_manage_row(),
+        ]))
+
+
+@dp.callback_query(F.data.startswith("eitmi_"))
+@auto_answer()
+async def adm_edit_item_icon_ask(call: CallbackQuery, state: FSMContext):
+    if not is_admin_user(call.from_user.id):
+        return
+    try:
+        item_id = int(call.data.split("_")[1])
+    except (ValueError, IndexError):
+        return
+    item = get_item(item_id)
+    if not item:
+        return
+    await state.update_data(item_id=item_id)
+    await state.set_state(AdminEditItem.icon)
+    await safe_edit_or_send(
+        call,
+        f"📌 Package: <b>{_html.escape(str(item['name']))}</b>\n\n"
+        f"✨ <b>សូមផ្ញើ Premium Emoji, Regular Emoji ឬ ID ថ្មី៖</b>",
+        cancel_inline())
+
+
+@dp.message(AdminEditItem.icon)
+async def adm_edit_item_icon_save(msg: Message, state: FSMContext):
+    icon_id = extract_emoji(msg)
+    if not icon_id:
+        return await msg.answer(
+            "❌ Invalid! Send a Premium Emoji, Regular Emoji, or its ID number (max 20 chars):",
+            reply_markup=cancel_inline())
+    d = await state.get_data()
+    item_id = d.get("item_id")
+    if item_id is None or not get_item(item_id):
+        await state.clear()
+        return await msg.answer("❌ រក Package មិនឃើញ!")
+    update_item(item_id, icon=icon_id)
+    await state.clear()
+    await msg.answer(
+        "✅ <b>កែ Icon Package ជោគជ័យ!</b>",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [IBtn(text="Edit Again", callback_data=f"eitm_{item_id}", style="primary")],
+            _back_manage_row(),
+        ]))
+
+
 @dp.callback_query(F.data == "adm_del_item")
 @auto_answer()
 async def adm_del_item(call: CallbackQuery):
@@ -2959,6 +3331,14 @@ async def main():
         await bot.delete_webhook(drop_pending_updates=True)
     except Exception as e:
         logger.warning(f"delete_webhook failed: {e}")
+
+    try:
+        await bot.set_my_commands([
+            BotCommand(command="start", description="Start the bot"),
+            BotCommand(command="buy", description="BUY NOW"),
+        ])
+    except Exception as e:
+        logger.warning(f"set_my_commands failed: {e}")
 
     try:
         await dp.start_polling(
